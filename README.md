@@ -2,7 +2,7 @@
 
 Aplicación móvil desarrollada con **Ionic Framework**, **Angular Standalone** y **Capacitor** para explorar el catálogo oficial de agentes, mapas y skins del videojuego Valorant.
 
-Proyecto realizado para el taller práctico de integración de APIs públicas (**ESFOT • Desarrollo de Aplicaciones Móviles**).
+Proyecto realizado para el taller práctico de integración de APIs públicas 
 
 ---
 
@@ -24,7 +24,6 @@ API Base: `https://valorant-api.com/v1`
 * **Agentes:** `GET /agents?isPlayableCharacter=true`
 * **Mapas:** `GET /maps`
 * **Skins de Armas:** `GET /weapons/skins`
-* **Detalle (preparados en servicio):** `GET /agents/{agentUuid}`, `GET /maps/{mapUuid}`
 
 ---
 
@@ -37,8 +36,6 @@ API Base: `https://valorant-api.com/v1`
 | Catálogo de Mapas | Catálogo de Skins |
 | :---: | :---: |
 | ![Mapas](screenshots/mapas.png) | ![Skins](screenshots/skins.png) |
-
-> *(Coloca tus capturas en la carpeta `screenshots/` con los nombres indicados).*
 
 ---
 
