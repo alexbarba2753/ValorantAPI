@@ -1,0 +1,204 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Valorant Explorer</ion-title>
+  </ion-toolbar>
+
+  <!-- Segmento para alternar entre los 3 endpoints -->
+  <ion-toolbar class="segment-toolbar">
+    <ion-segment [value]="selectedCategory" (ionChange)="onSegmentChange($event)">
+      <ion-segment-button value="agents">
+        <ion-label>Agentes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="maps">
+        <ion-label>Mapas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="skins">
+        <ion-label>Skins</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+  <!-- Barra de búsqueda (Requisito R3) -->
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar
+      [value]="searchTerm"
+      (ionInput)="onSearch($event)"
+      (ionClear)="onClearSearch()"
+      placeholder="Buscar por nombre o rol..."
+      [debounce]="250"
+      show-clear-button="focus"
+    ></ion-searchbar>
+  </ion-toolbar>
+
+  <!-- Opciones de filtros seleccionables (Chips) -->
+  @if (availableFilters.length > 1) {
+    <div class="filters-row">
+      <span class="filter-label">Filtrar:</span>
+      <div class="filters-chips-scroll">
+        @for (option of availableFilters; track option) {
+          <ion-chip
+            [class.active-chip]="selectedFilter === option"
+            (click)="selectFilter(option)"
+          >
+            <ion-label>{{ option }}</ion-label>
+          </ion-chip>
+        }
+      </div>
+    </div>
+  }
+</ion-header>
+
+<ion-content [fullscreen]="true" class="valorant-content">
+
+  <!-- Estado de carga inicial -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando información desde Valorant API...</p>
+    </div>
+  }
+
+  <!-- Estado de error -->
+  @if (errorMessage && !isLoading) {
+    <div class="error-container">
+      <ion-text color="danger">
+        <p>{{ errorMessage }}</p>
+      </ion-text>
+      <ion-button color="primary" fill="outline" (click)="loadCategoryData()">
+        Reintentar
+      </ion-button>
+    </div>
+  }
+
+  <!-- Estado sin resultados de búsqueda (Requisito R3) -->
+  @if (!isLoading && !errorMessage && displayedItems.length === 0) {
+    <div class="empty-state">
+      <p>No se encontraron resultados para <strong>"{{ searchTerm || selectedFilter }}"</strong></p>
+      <ion-button size="small" fill="outline" color="primary" (click)="onClearSearch()">
+        Restablecer filtros
+      </ion-button>
+    </div>
+  }
+
+  <!-- Lista de Tarjetas (Requisito R1) -->
+  @if (!isLoading && !errorMessage && displayedItems.length > 0) {
+    <div class="cards-container">
+      @for (item of displayedItems; track item.uuid) {
+        <ion-card class="valorant-card">
+
+          <!-- ================= VISTA DE AGENTES ================= -->
+          @if (selectedCategory === 'agents') {
+            <div class="card-image-box agent-box">
+              <img
+                [src]="item.fullPortrait || item.displayIcon"
+                [alt]="item.displayName"
+                class="agent-img"
+                loading="lazy"
+              />
+            </div>
+
+            <ion-card-header>
+              <div class="badge-wrapper">
+                <ion-badge color="primary">{{ item.role?.displayName || 'Agente' }}</ion-badge>
+              </div>
+              <ion-card-title>{{ item.displayName }}</ion-card-title>
+              <ion-card-subtitle>
+                <strong>Rol:</strong> {{ item.role?.displayName || 'Sin rol asignado' }}
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <p class="description-text">{{ item.description }}</p>
+              
+              @if (item.abilities?.length) {
+                <div class="abilities-section">
+                  <span class="ability-title">Habilidades:</span>
+                  <div class="ability-chips">
+                    @for (ab of item.abilities; track ab.displayName) {
+                      <span class="ability-chip">
+                        {{ ab.displayName }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </ion-card-content>
+          }
+
+          <!-- ================= VISTA DE MAPAS ================= -->
+          @if (selectedCategory === 'maps') {
+            <div class="card-image-box map-box">
+              <img
+                [src]="item.splash || item.displayIcon"
+                [alt]="item.displayName"
+                class="map-img"
+                loading="lazy"
+              />
+            </div>
+
+            <ion-card-header>
+              <ion-card-title>{{ item.displayName }}</ion-card-title>
+              <ion-card-subtitle>
+                <strong>Coordenadas:</strong> {{ item.coordinates || 'Coordenadas clasificadas' }}
+              </ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <p class="attribute-line">
+                <strong>Sector táctico:</strong> {{ item.tacticalDescription || 'Área de operaciones' }}
+              </p>
+              @if (item.narrativeDescription) {
+                <p class="attribute-line">
+                  <strong>Descripción:</strong> {{ item.narrativeDescription }}
+                </p>
+              }
+            </ion-card-content>
+          }
+
+          <!-- ================= VISTA DE SKINS ================= -->
+          @if (selectedCategory === 'skins') {
+            <div class="card-image-box skin-box">
+              <img
+                [src]="item.displayIcon"
+                [alt]="item.displayName"
+                class="skin-img"
+                loading="lazy"
+              />
+            </div>
+
+            <ion-card-header>
+              <ion-card-title>{{ item.displayName }}</ion-card-title>
+              <ion-card-subtitle>Aspecto de Arma</ion-card-subtitle>
+            </ion-card-header>
+
+            <ion-card-content>
+              <p class="attribute-line">
+                <strong>Variantes (Cromas):</strong> {{ item.chromas?.length || 1 }} variantes
+              </p>
+              <p class="attribute-line">
+                <strong>Niveles de mejora:</strong> {{ item.levels?.length || 1 }} niveles
+              </p>
+            </ion-card-content>
+          }
+
+        </ion-card>
+      }
+    </div>
+  }
+
+  <!-- Infinite Scroll (Requisito R2) -->
+  <ion-infinite-scroll [disabled]="!hasMore" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="crescent"
+      loadingText="Cargando más elementos...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <!-- Mensaje de fin de lista -->
+  @if (!hasMore && displayedItems.length > 0 && !isLoading) {
+    <div class="end-of-list">
+      <p>Fin del catálogo • {{ displayedItems.length }} elementos cargados</p>
+    </div>
+  }
+
+</ion-content>

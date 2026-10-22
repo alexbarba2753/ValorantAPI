@@ -1,0 +1,264 @@
+.segment-toolbar {
+  --background: #0f1923;
+  padding: 4px 8px 0 8px;
+
+  ion-segment {
+    --background: #17222d;
+    border-radius: 8px;
+
+    ion-segment-button {
+      --color: #a3afbd;
+      --color-checked: #ffffff;
+      --indicator-color: #ff4655;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.search-toolbar {
+  --background: #0f1923;
+  padding: 0 4px;
+
+  ion-searchbar {
+    --background: #17222d;
+    --color: #ffffff;
+    --placeholder-color: #8b97a4;
+    --icon-color: #ff4655;
+    --clear-button-color: #ff4655;
+    --border-radius: 8px;
+    padding: 4px 8px 2px 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Fila de opciones de filtro (Chips) */
+.filters-row {
+  background: #0f1923;
+  display: flex;
+  align-items: center;
+  padding: 2px 10px 8px 10px;
+  border-bottom: 1px solid rgba(255, 70, 85, 0.25);
+
+  .filter-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ff4655;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 6px;
+    white-space: nowrap;
+  }
+
+  .filters-chips-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    ion-chip {
+      background: #17222d;
+      color: #a3afbd;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.78rem;
+      font-weight: 500;
+      margin: 0;
+      height: 28px;
+      padding: 0 10px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      white-space: nowrap;
+
+      &:hover {
+        background: #202d3a;
+        color: #ffffff;
+      }
+
+      &.active-chip {
+        background: #ff4655;
+        color: #ffffff;
+        font-weight: 700;
+        border-color: #ff4655;
+        box-shadow: 0 2px 8px rgba(255, 70, 85, 0.45);
+      }
+    }
+  }
+}
+
+.valorant-content {
+  --background: #0f1923;
+}
+
+.loading-container,
+.error-container,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #ece8e1;
+
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 8px 0 16px 0;
+    color: #c5cfd9;
+    font-size: 0.95rem;
+
+    strong {
+      color: #ff4655;
+    }
+  }
+}
+
+.cards-container {
+  padding: 4px 2px 20px 2px;
+}
+
+.valorant-card {
+  background: #17222d;
+  border-radius: 10px;
+  border-left: 4px solid #ff4655;
+  margin: 14px 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+
+  ion-card-header {
+    padding-bottom: 6px;
+
+    .badge-wrapper {
+      margin-bottom: 6px;
+    }
+
+    ion-card-title {
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    ion-card-subtitle {
+      color: #ff4655;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+  }
+
+  ion-card-content {
+    color: #c5cfd9;
+    font-size: 0.88rem;
+
+    .description-text {
+      line-height: 1.45;
+      margin: 0 0 10px 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .attribute-line {
+      margin: 6px 0;
+      color: #ece8e1;
+
+      strong {
+        color: #ff4655;
+      }
+    }
+  }
+}
+
+/* Contenedores de imagen según categoría */
+.card-image-box {
+  background: #101820;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  &.agent-box {
+    height: 220px;
+    background: radial-gradient(circle at center, #243547 0%, #101820 80%);
+
+    .agent-img {
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &.map-box {
+    height: 180px;
+
+    .map-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &.skin-box {
+    height: 140px;
+    padding: 16px;
+
+    .skin-img {
+      max-height: 100%;
+      max-width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+    }
+  }
+}
+
+/* Habilidades de agentes */
+.abilities-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+
+  .ability-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ece8e1;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .ability-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    .ability-chip {
+      background: rgba(255, 70, 85, 0.15);
+      border: 1px solid rgba(255, 70, 85, 0.35);
+      color: #ff8a93;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Mensaje final de lista */
+.end-of-list {
+  text-align: center;
+  padding: 16px 10px 24px 10px;
+  color: #7b8896;
+  font-size: 0.85rem;
+
+  p {
+    margin: 0;
+  }
+}

@@ -1,2 +1,15 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// Paleta de colores temáticos de Valorant (sencilla y directa)
+
+:root {
+  --ion-color-primary: #ff4655;
+  --ion-color-primary-rgb: 255, 70, 85;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #e03e4b;
+  --ion-color-primary-tint: #ff5966;
+
+  --ion-background-color: #0f1923;
+  --ion-background-color-rgb: 15, 25, 35;
+  --ion-text-color: #ece8e1;
+  --ion-text-color-rgb: 236, 232, 225;
+}
