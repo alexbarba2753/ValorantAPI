@@ -39,10 +39,10 @@ API Base: `https://valorant-api.com/v1`
 
 ---
 
-## ⚙️ Decisiones Técnicas y Paginación (Explicación Sencilla)
+## ⚙️ Decisiones Técnicas
 
 * **¿Cómo hicimos el Infinite Scroll si la API no tiene páginas?**  
-  La API de Valorant entrega todos los datos juntos en una sola consulta. Para que el Infinite Scroll funcione como pide la actividad y la app no se vuelva lenta, guardamos los datos en memoria y los vamos mostrando poco a poco (de **6 en 6**). Cada vez que el usuario baja hasta el final de la pantalla, la app agrega 6 elementos más de forma fluida y sin repetir ninguno.
+  La API de Valorant entrega todos los datos juntos en una sola consulta. Para que el Infinite Scroll funcione como pide la actividad y la app no se vuelva lenta, guardamos los datos en memoria y los vamos mostrando poco a poco (de 6 en 6). Cada vez que el usuario baja hasta el final de la pantalla, la app agrega 6 elementos más de forma fluida y sin repetir ninguno.
 
 * **¿Por qué la app no se traba con tantas skins (+1.400)?**  
   Tener texto en memoria casi no gasta recursos. Lo que pondría lento un teléfono sería dibujar 1.400 tarjetas y cargar 1.400 fotos al mismo tiempo. Al ir mostrándolas en grupitos pequeños gracias al Infinite Scroll, la aplicación siempre se mantiene rápida y fluida.
