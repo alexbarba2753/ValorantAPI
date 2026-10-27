@@ -50,7 +50,17 @@
 
 <ion-content [fullscreen]="true" class="valorant-content">
 
-  <!-- Estado de carga inicial -->
+  <!-- Pull-to-refresh para recargar sin bloquear la pantalla (Requisito R5 y Extensión) -->
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      pullingText="Desliza para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando datos...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Estado de carga inicial (Requisito R5) -->
   @if (isLoading) {
     <div class="loading-container">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
@@ -58,21 +68,26 @@
     </div>
   }
 
-  <!-- Estado de error -->
+  <!-- Estado de error de conexión / API con reintento (Requisito R5) -->
   @if (errorMessage && !isLoading) {
     <div class="error-container">
+      <ion-icon
+        [name]="isNetworkError ? 'cloud-offline-outline' : 'alert-circle-outline'"
+        class="state-icon error-icon"
+      ></ion-icon>
       <ion-text color="danger">
         <p>{{ errorMessage }}</p>
       </ion-text>
       <ion-button color="primary" fill="outline" (click)="loadCategoryData()">
-        Reintentar
+        Reintentar conexión
       </ion-button>
     </div>
   }
 
-  <!-- Estado sin resultados de búsqueda (Requisito R3) -->
+  <!-- Estado sin resultados de búsqueda (Requisito R3 y R5) -->
   @if (!isLoading && !errorMessage && displayedItems.length === 0) {
     <div class="empty-state">
+      <ion-icon name="search-outline" class="state-icon empty-icon"></ion-icon>
       <p>No se encontraron resultados para <strong>"{{ searchTerm || selectedFilter }}"</strong></p>
       <ion-button size="small" fill="outline" color="primary" (click)="onClearSearch()">
         Restablecer filtros

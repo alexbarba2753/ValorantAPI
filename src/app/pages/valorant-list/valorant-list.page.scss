@@ -52,39 +52,29 @@
 
   .filters-chips-scroll {
     display: flex;
-    overflow-x: auto;
     gap: 6px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
 
     &::-webkit-scrollbar {
       display: none;
     }
 
     ion-chip {
-      background: #17222d;
-      color: #a3afbd;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      font-size: 0.78rem;
-      font-weight: 500;
+      --background: #1a2733;
+      --color: #c5cfd9;
       margin: 0;
+      font-size: 0.8rem;
       height: 28px;
-      padding: 0 10px;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-      white-space: nowrap;
-
-      &:hover {
-        background: #202d3a;
-        color: #ffffff;
-      }
+      border: 1px solid rgba(255, 255, 255, 0.08);
 
       &.active-chip {
-        background: #ff4655;
-        color: #ffffff;
-        font-weight: 700;
+        --background: #ff4655;
+        --color: #ffffff;
+        font-weight: 600;
         border-color: #ff4655;
-        box-shadow: 0 2px 8px rgba(255, 70, 85, 0.45);
       }
     }
   }
@@ -104,6 +94,19 @@
   padding: 40px 20px;
   text-align: center;
   color: #ece8e1;
+
+  .state-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+
+    &.error-icon {
+      color: #ff4655;
+    }
+
+    &.empty-icon {
+      color: #9aa4af;
+    }
+  }
 
   ion-spinner {
     width: 48px;
@@ -133,6 +136,7 @@
   margin: 14px 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  cursor: pointer;
 
   ion-card-header {
     padding-bottom: 6px;
@@ -142,14 +146,14 @@
     }
 
     ion-card-title {
-      color: #ffffff;
       font-size: 1.25rem;
       font-weight: 700;
+      color: #ffffff;
       letter-spacing: 0.5px;
     }
 
     ion-card-subtitle {
-      color: #ff4655;
+      color: #8b97a4;
       font-size: 0.85rem;
       margin-top: 2px;
     }
@@ -157,48 +161,50 @@
 
   ion-card-content {
     color: #c5cfd9;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+    padding-top: 2px;
 
     .description-text {
-      line-height: 1.45;
-      margin: 0 0 10px 0;
+      line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      margin-bottom: 10px;
     }
 
     .attribute-line {
       margin: 6px 0;
-      color: #ece8e1;
+      color: #c5cfd9;
 
       strong {
-        color: #ff4655;
+        color: #ffffff;
       }
     }
   }
 }
 
-/* Contenedores de imagen según categoría */
 .card-image-box {
-  background: #101820;
+  width: 100%;
+  background-color: #0c141d;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  overflow: hidden;
 
   &.agent-box {
-    height: 220px;
-    background: radial-gradient(circle at center, #243547 0%, #101820 80%);
+    height: 200px;
 
     .agent-img {
-      max-height: 100%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
     }
   }
 
   &.map-box {
-    height: 180px;
+    height: 170px;
 
     .map-img {
       width: 100%;
@@ -208,28 +214,28 @@
   }
 
   &.skin-box {
-    height: 140px;
-    padding: 16px;
+    height: 150px;
+    padding: 10px;
 
     .skin-img {
-      max-height: 100%;
       max-width: 90%;
+      max-height: 90%;
       object-fit: contain;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
     }
   }
 }
 
-/* Habilidades de agentes */
+/* Sección de habilidades de agente */
 .abilities-section {
-  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 8px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  margin-top: 8px;
 
   .ability-title {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: #ece8e1;
+    color: #ff4655;
+    text-transform: uppercase;
     display: block;
     margin-bottom: 6px;
   }
@@ -240,25 +246,20 @@
     gap: 6px;
 
     .ability-chip {
-      background: rgba(255, 70, 85, 0.15);
-      border: 1px solid rgba(255, 70, 85, 0.35);
-      color: #ff8a93;
+      background: #233241;
+      color: #ffffff;
       padding: 3px 8px;
       border-radius: 4px;
       font-size: 0.75rem;
-      font-weight: 500;
+      border: 1px solid rgba(255, 70, 85, 0.3);
     }
   }
 }
 
-/* Mensaje final de lista */
 .end-of-list {
   text-align: center;
-  padding: 16px 10px 24px 10px;
-  color: #7b8896;
+  padding: 16px 12px 32px 12px;
+  color: #8b97a4;
   font-size: 0.85rem;
-
-  p {
-    margin: 0;
-  }
+  letter-spacing: 0.5px;
 }

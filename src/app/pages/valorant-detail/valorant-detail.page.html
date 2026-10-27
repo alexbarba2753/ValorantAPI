@@ -9,7 +9,7 @@
 
 <ion-content [fullscreen]="true" class="detail-content">
 
-  <!-- Estado de carga -->
+  <!-- Estado de carga (Requisito R5) -->
   @if (isLoading) {
     <div class="state-container">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
@@ -17,14 +17,18 @@
     </div>
   }
 
-  <!-- Estado de error -->
+  <!-- Estado de error de red o recurso no encontrado con reintento (Requisito R5) -->
   @if (errorMessage && !isLoading) {
     <div class="state-container error-state">
+      <ion-icon
+        [name]="isNetworkError ? 'cloud-offline-outline' : 'alert-circle-outline'"
+        class="state-icon error-icon"
+      ></ion-icon>
       <ion-text color="danger">
         <p>{{ errorMessage }}</p>
       </ion-text>
       <ion-button color="primary" fill="outline" (click)="loadDetail()">
-        Reintentar
+        Reintentar carga
       </ion-button>
     </div>
   }

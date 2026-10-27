@@ -11,8 +11,17 @@
   padding: 48px 24px;
   text-align: center;
 
+  .state-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+
+    &.error-icon {
+      color: #ff4655;
+    }
+  }
+
   p {
-    margin-top: 16px;
+    margin-top: 12px;
     font-size: 0.95rem;
     color: #9aa4af;
   }

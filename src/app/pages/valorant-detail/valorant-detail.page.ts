@@ -19,7 +19,13 @@ import {
   IonBadge,
   IonChip,
   IonLabel,
+  IonIcon,
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  cloudOfflineOutline,
+  alertCircleOutline,
+} from 'ionicons/icons';
 import { ValorantService } from '../../services/valorant';
 
 @Component({
@@ -46,6 +52,7 @@ import { ValorantService } from '../../services/valorant';
     IonBadge,
     IonChip,
     IonLabel,
+    IonIcon,
   ],
 })
 export class ValorantDetailPage implements OnInit {
@@ -58,6 +65,14 @@ export class ValorantDetailPage implements OnInit {
   item: any = null;
   isLoading: boolean = true;
   errorMessage: string = '';
+  isNetworkError: boolean = false;
+
+  constructor() {
+    addIcons({
+      cloudOfflineOutline,
+      alertCircleOutline,
+    });
+  }
 
   ngOnInit(): void {
     this.category = this.route.snapshot.paramMap.get('category') || 'agents';
@@ -66,7 +81,7 @@ export class ValorantDetailPage implements OnInit {
   }
 
   /**
-   * Carga el elemento específico según su categoría y UUID (Requisito R4)
+   * Carga el elemento específico según su categoría y UUID (Requisitos R4 y R5)
    */
   loadDetail(): void {
     if (!this.id) {
@@ -78,7 +93,18 @@ export class ValorantDetailPage implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.isNetworkError = false;
     this.cdr.markForCheck();
+
+    const handleError = (err: any) => {
+      console.error('[ValorantDetail] Error al cargar detalle:', err);
+      this.isNetworkError = !navigator.onLine || err.status === 0;
+      this.errorMessage = this.isNetworkError
+        ? 'Error de red: No se pudo conectar con el servidor. Revisa tu conexión.'
+        : 'No se pudo obtener el detalle solicitado. Intenta nuevamente.';
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    };
 
     if (this.category === 'agents') {
       this.valorantService.getAgentById(this.id).subscribe({
@@ -87,12 +113,7 @@ export class ValorantDetailPage implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
-          console.error('[ValorantDetail] Error al cargar agente:', err);
-          this.errorMessage = 'No se pudo obtener el detalle del agente. Revisa tu conexión.';
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
+        error: handleError,
       });
     } else if (this.category === 'maps') {
       this.valorantService.getMapById(this.id).subscribe({
@@ -101,30 +122,20 @@ export class ValorantDetailPage implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
-          console.error('[ValorantDetail] Error al cargar mapa:', err);
-          this.errorMessage = 'No se pudo obtener el detalle del mapa. Revisa tu conexión.';
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
+        error: handleError,
       });
     } else {
       this.valorantService.getSkinById(this.id).subscribe({
         next: (skin) => {
           if (!skin) {
-            this.errorMessage = 'Skin no encontrada en el catálogo.';
+            this.errorMessage = 'Aspecto (skin) no encontrado en el catálogo.';
           } else {
             this.item = skin;
           }
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (err) => {
-          console.error('[ValorantDetail] Error al cargar skin:', err);
-          this.errorMessage = 'No se pudo obtener el detalle de la skin. Revisa tu conexión.';
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
+        error: handleError,
       });
     }
   }
