@@ -80,11 +80,11 @@
     </div>
   }
 
-  <!-- Lista de Tarjetas (Requisito R1) -->
+  <!-- Lista de Tarjetas (Requisito R1) con navegación a Detalle (Requisito R4) -->
   @if (!isLoading && !errorMessage && displayedItems.length > 0) {
     <div class="cards-container">
       @for (item of displayedItems; track item.uuid) {
-        <ion-card class="valorant-card">
+        <ion-card class="valorant-card" (click)="goToDetail(item)" [button]="true">
 
           <!-- ================= VISTA DE AGENTES ================= -->
           @if (selectedCategory === 'agents') {

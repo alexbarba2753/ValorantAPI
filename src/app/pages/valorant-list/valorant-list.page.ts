@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import {
   IonContent,
@@ -60,6 +61,7 @@ export type ValorantCategory = 'agents' | 'maps' | 'skins';
 export class ValorantListPage implements OnInit {
   private valorantService = inject(ValorantService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   // Categoría seleccionada por el usuario
   selectedCategory: ValorantCategory = 'agents';
@@ -276,5 +278,13 @@ export class ValorantListPage implements OnInit {
       this.searchTerm = '';
       this.loadCategoryData();
     }
+  }
+
+  /**
+   * Navega a la vista de detalle del elemento seleccionado (Requisito R4)
+   */
+  goToDetail(item: any): void {
+    if (!item?.uuid) return;
+    this.router.navigate(['/detail', this.selectedCategory, item.uuid]);
   }
 }

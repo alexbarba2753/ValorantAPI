@@ -25,7 +25,7 @@ export class ValorantService {
   }
 
   /**
-   * Obtiene un agente por su UUID (Dejado listo para la siguiente fase)
+   * Obtiene un agente por su UUID
    */
   getAgentById(agentUuid: string): Observable<Agent> {
     return this.http
@@ -47,7 +47,7 @@ export class ValorantService {
   }
 
   /**
-   * Obtiene un mapa por su UUID (Dejado listo para la siguiente fase)
+   * Obtiene un mapa por su UUID
    */
   getMapById(mapUuid: string): Observable<ValorantMap> {
     return this.http
@@ -73,5 +73,14 @@ export class ValorantService {
           )
         )
       );
+  }
+
+  /**
+   * Obtiene una skin de arma por su UUID buscando en el catálogo filtrado
+   */
+  getSkinById(skinUuid: string): Observable<WeaponSkin | undefined> {
+    return this.getSkins().pipe(
+      map((skins) => skins.find((skin) => skin.uuid === skinUuid))
+    );
   }
 }

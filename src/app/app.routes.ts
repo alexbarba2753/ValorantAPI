@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/valorant-list/valorant-list.page').then((m) => m.ValorantListPage),
   },
   {
+    path: 'detail/:category/:id',
+    loadComponent: () => import('./pages/valorant-detail/valorant-detail.page').then((m) => m.ValorantDetailPage),
+  },
+  {
     path: 'home',
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },

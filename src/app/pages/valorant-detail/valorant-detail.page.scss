@@ -1,0 +1,242 @@
+.detail-content {
+  --background: #0f1923;
+  color: #ece8e1;
+}
+
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+
+  p {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: #9aa4af;
+  }
+}
+
+.error-state {
+  ion-button {
+    margin-top: 16px;
+  }
+}
+
+.hero-header {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  background-color: #1a2733;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.agent-hero .hero-img {
+    object-fit: contain;
+    padding-top: 10px;
+  }
+
+  &.skin-hero .hero-img {
+    object-fit: contain;
+    padding: 20px;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: linear-gradient(0deg, rgba(15, 25, 35, 0.95) 0%, rgba(15, 25, 35, 0.2) 80%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #ece8e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .role-chip {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+
+      .chip-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+.detail-body {
+  padding: 16px;
+}
+
+.info-card {
+  --background: #1a2733;
+  color: #ece8e1;
+  border-radius: 12px;
+  margin: 0 0 16px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  ion-card-title {
+    color: #ff4655;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  ion-card-subtitle {
+    color: #9aa4af;
+    font-size: 0.85rem;
+  }
+
+  .description-text {
+    line-height: 1.5;
+    font-size: 0.95rem;
+    color: #ece8e1;
+    margin-bottom: 12px;
+  }
+
+  .role-description {
+    background: rgba(255, 70, 85, 0.08);
+    border-left: 3px solid #ff4655;
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin-top: 12px;
+
+    strong {
+      color: #ff4655;
+      font-size: 0.85rem;
+    }
+
+    p {
+      margin: 4px 0 0 0;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+  }
+
+  .info-line {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+
+    strong {
+      color: #ece8e1;
+    }
+  }
+}
+
+.minimap-container {
+  display: flex;
+  justify-content: center;
+  background: #0f1923;
+  padding: 16px;
+  border-radius: 8px;
+
+  .minimap-img {
+    max-width: 280px;
+    height: auto;
+  }
+}
+
+.section-title {
+  color: #ece8e1;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 20px 0 12px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-left: 3px solid #ff4655;
+  padding-left: 8px;
+}
+
+.abilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .ability-card {
+    --background: #1a2733;
+    margin: 0;
+    border-radius: 10px;
+
+    .ability-header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .ability-icon {
+        width: 36px;
+        height: 36px;
+        background: #0f1923;
+        border-radius: 6px;
+        padding: 4px;
+      }
+
+      ion-card-title {
+        font-size: 1rem;
+        color: #ece8e1;
+      }
+
+      ion-card-subtitle {
+        color: #ff4655;
+        font-size: 0.8rem;
+      }
+    }
+
+    .ability-description {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #9aa4af;
+    }
+  }
+}
+
+.chromas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+
+  .chroma-card {
+    --background: #1a2733;
+    margin: 0;
+    border-radius: 8px;
+    text-align: center;
+    padding: 8px;
+
+    .chroma-img {
+      max-height: 80px;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+
+    ion-card-header {
+      padding: 8px 4px 4px 4px;
+
+      ion-card-subtitle {
+        font-size: 0.75rem;
+        color: #cbd5e1;
+      }
+    }
+  }
+}

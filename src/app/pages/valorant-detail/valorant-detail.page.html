@@ -1,0 +1,198 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/valorant-list" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ item?.displayName || getCategoryTitle() }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="detail-content">
+
+  <!-- Estado de carga -->
+  @if (isLoading) {
+    <div class="state-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando información detallada...</p>
+    </div>
+  }
+
+  <!-- Estado de error -->
+  @if (errorMessage && !isLoading) {
+    <div class="state-container error-state">
+      <ion-text color="danger">
+        <p>{{ errorMessage }}</p>
+      </ion-text>
+      <ion-button color="primary" fill="outline" (click)="loadDetail()">
+        Reintentar
+      </ion-button>
+    </div>
+  }
+
+  <!-- Contenido detallado -->
+  @if (!isLoading && !errorMessage && item) {
+
+    <!-- ======================= DETALLE DE AGENTE ======================= -->
+    @if (category === 'agents') {
+      <div class="hero-header agent-hero">
+        <img
+          [src]="item.fullPortrait || item.displayIcon"
+          [alt]="item.displayName"
+          class="hero-img"
+        />
+        <div class="hero-overlay">
+          <h2>{{ item.displayName }}</h2>
+          @if (item.role) {
+            <ion-chip color="light" class="role-chip">
+              @if (item.role.displayIcon) {
+                <img [src]="item.role.displayIcon" [alt]="item.role.displayName" class="chip-icon" />
+              }
+              <ion-label>{{ item.role.displayName }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <!-- Biografía / Descripción -->
+        <ion-card class="info-card">
+          <ion-card-header>
+            <ion-card-title>Biografía del Agente</ion-card-title>
+            @if (item.developerName) {
+              <ion-card-subtitle>Nombre clave: {{ item.developerName }}</ion-card-subtitle>
+            }
+          </ion-card-header>
+          <ion-card-content>
+            <p class="description-text">{{ item.description }}</p>
+            @if (item.role?.description) {
+              <div class="role-description">
+                <strong>Rol ({{ item.role.displayName }}):</strong>
+                <p>{{ item.role.description }}</p>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Habilidades -->
+        @if (item.abilities?.length) {
+          <h3 class="section-title">Habilidades Especiales</h3>
+          <div class="abilities-list">
+            @for (ability of item.abilities; track ability.displayName) {
+              <ion-card class="ability-card">
+                <ion-card-header>
+                  <div class="ability-header-row">
+                    @if (ability.displayIcon) {
+                      <img [src]="ability.displayIcon" [alt]="ability.displayName" class="ability-icon" />
+                    }
+                    <div>
+                      <ion-card-title>{{ ability.displayName }}</ion-card-title>
+                      <ion-card-subtitle>Tecla / Slot: {{ ability.slot || 'Habilidad' }}</ion-card-subtitle>
+                    </div>
+                  </div>
+                </ion-card-header>
+                <ion-card-content>
+                  <p class="ability-description">{{ ability.description }}</p>
+                </ion-card-content>
+              </ion-card>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ======================= DETALLE DE MAPA ======================= -->
+    @if (category === 'maps') {
+      <div class="hero-header map-hero">
+        <img
+          [src]="item.splash || item.displayIcon"
+          [alt]="item.displayName"
+          class="hero-img"
+        />
+        <div class="hero-overlay">
+          <h2>{{ item.displayName }}</h2>
+          <ion-badge color="primary">{{ item.tacticalDescription || 'Mapa Táctico' }}</ion-badge>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <ion-card class="info-card">
+          <ion-card-header>
+            <ion-card-title>Información Táctica</ion-card-title>
+            <ion-card-subtitle>
+              Coordenadas: {{ item.coordinates || 'Coordenadas clasificadas' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            @if (item.narrativeDescription) {
+              <p class="description-text">{{ item.narrativeDescription }}</p>
+            }
+            <p class="info-line">
+              <strong>Sitios de Bomba / Sector:</strong> {{ item.tacticalDescription || 'Área de operaciones activa' }}
+            </p>
+          </ion-card-content>
+        </ion-card>
+
+        @if (item.displayIcon) {
+          <ion-card class="info-card">
+            <ion-card-header>
+              <ion-card-title>Plano Táctico (Minimapa)</ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="minimap-container">
+              <img [src]="item.displayIcon" [alt]="'Plano de ' + item.displayName" class="minimap-img" />
+            </ion-card-content>
+          </ion-card>
+        }
+      </div>
+    }
+
+    <!-- ======================= DETALLE DE SKIN ======================= -->
+    @if (category === 'skins') {
+      <div class="hero-header skin-hero">
+        <img
+          [src]="item.wallpaper || item.displayIcon"
+          [alt]="item.displayName"
+          class="hero-img skin-img"
+        />
+        <div class="hero-overlay">
+          <h2>{{ item.displayName }}</h2>
+          <ion-badge color="primary">Aspecto de Arma</ion-badge>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <ion-card class="info-card">
+          <ion-card-header>
+            <ion-card-title>Detalles del Cosmético</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="info-line">
+              <strong>Total de Variantes (Cromas):</strong> {{ item.chromas?.length || 1 }}
+            </p>
+            <p class="info-line">
+              <strong>Niveles de animación/remate:</strong> {{ item.levels?.length || 1 }}
+            </p>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Variantes / Cromas -->
+        @if (item.chromas?.length) {
+          <h3 class="section-title">Variantes de Color (Cromas)</h3>
+          <div class="chromas-grid">
+            @for (chroma of item.chromas; track chroma.uuid) {
+              <ion-card class="chroma-card">
+                @if (chroma.fullRender || chroma.displayIcon) {
+                  <img [src]="chroma.fullRender || chroma.displayIcon" [alt]="chroma.displayName" class="chroma-img" />
+                }
+                <ion-card-header>
+                  <ion-card-subtitle>{{ chroma.displayName }}</ion-card-subtitle>
+                </ion-card-header>
+              </ion-card>
+            }
+          </div>
+        }
+      </div>
+    }
+
+  }
+
+</ion-content>
