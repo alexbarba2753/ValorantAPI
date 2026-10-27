@@ -35,10 +35,14 @@ import {
   searchOutline,
   refreshOutline,
   alertCircleOutline,
+  star,
+  starOutline,
 } from 'ionicons/icons';
 import { ValorantService } from '../../services/valorant';
+import { FavoritesService } from '../../services/favorites';
+import { FavoriteItem } from '../../models/valorant.models';
 
-export type ValorantCategory = 'agents' | 'maps' | 'skins';
+export type ValorantCategory = 'agents' | 'maps' | 'skins' | 'favorites';
 
 @Component({
   selector: 'app-valorant-list',
@@ -74,11 +78,12 @@ export type ValorantCategory = 'agents' | 'maps' | 'skins';
 })
 export class ValorantListPage implements OnInit {
   private valorantService = inject(ValorantService);
+  private favoritesService = inject(FavoritesService);
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private toastController = inject(ToastController);
 
-  // Categoría seleccionada por el usuario
+  // Categoría seleccionada por el usuario (Agentes, Mapas, Skins o Favoritos)
   selectedCategory: ValorantCategory = 'agents';
 
   // Término de búsqueda y opciones de filtro (Requisito R3)
@@ -106,6 +111,8 @@ export class ValorantListPage implements OnInit {
       searchOutline,
       refreshOutline,
       alertCircleOutline,
+      star,
+      starOutline,
     });
   }
 
@@ -113,17 +120,21 @@ export class ValorantListPage implements OnInit {
     this.loadCategoryData();
   }
 
-  ionViewDidEnter(): void {
-    if (this.allItems.length === 0 && !this.isLoading) {
+  async ionViewDidEnter(): Promise<void> {
+    await this.favoritesService.refreshCache();
+    if (this.selectedCategory === 'favorites') {
       this.loadCategoryData();
+    } else if (this.allItems.length === 0 && !this.isLoading) {
+      this.loadCategoryData();
+    } else {
+      this.cdr.markForCheck();
     }
   }
 
   /**
-   * Carga los datos remotos usando el servicio HTTP (Requisitos R5 y R7)
+   * Carga los datos remotos usando el servicio HTTP o favoritos locales (Requisitos R5, R6 y R7)
    */
-  loadCategoryData(refresherEvent?: any): void {
-    // Si no es un refresco por swipe, mostramos el spinner principal
+  async loadCategoryData(refresherEvent?: any): Promise<void> {
     if (!refresherEvent) {
       this.isLoading = true;
     }
@@ -136,6 +147,27 @@ export class ValorantListPage implements OnInit {
     this.hasMore = true;
     this.cdr.markForCheck();
 
+    // Caso de categoría Favoritos (Requisito R6)
+    if (this.selectedCategory === 'favorites') {
+      try {
+        const favs = await this.favoritesService.getFavorites();
+        this.allItems = favs;
+        this.updateAvailableFilters();
+        this.applyFilter();
+      } catch (err) {
+        console.error('[ValorantListPage] Error al leer favoritos:', err);
+        this.errorMessage = 'No se pudieron recuperar los favoritos locales.';
+      } finally {
+        this.isLoading = false;
+        if (refresherEvent) {
+          refresherEvent.target.complete();
+        }
+        this.cdr.markForCheck();
+      }
+      return;
+    }
+
+    // Caso de categorías remotas (Agentes, Mapas, Skins)
     let request$: Observable<any[]>;
     if (this.selectedCategory === 'agents') {
       request$ = this.valorantService.getAgents();
@@ -185,11 +217,65 @@ export class ValorantListPage implements OnInit {
   async showToast(message: string): Promise<void> {
     const toast = await this.toastController.create({
       message,
-      duration: 3000,
+      duration: 2500,
       position: 'bottom',
       color: 'dark',
     });
     await toast.present();
+  }
+
+  /**
+   * Comprueba si un UUID está marcado en favoritos (Requisito R6)
+   */
+  isFavorite(uuid: string): boolean {
+    return this.favoritesService.isFavorite(uuid);
+  }
+
+  /**
+   * Alterna el estado de favorito de un elemento con Capacitor Preferences (Requisito R6)
+   */
+  async toggleFavorite(event: Event, item: any): Promise<void> {
+    event.stopPropagation();
+
+    let category: 'agents' | 'maps' | 'skins' = 'agents';
+    let subtitle = '';
+    let imageUrl = '';
+
+    if (this.selectedCategory === 'favorites') {
+      category = item.category || 'agents';
+      subtitle = item.subtitle || '';
+      imageUrl = item.imageUrl || '';
+    } else if (this.selectedCategory === 'agents') {
+      category = 'agents';
+      subtitle = item.role?.displayName || 'Agente';
+      imageUrl = item.fullPortrait || item.displayIcon || '';
+    } else if (this.selectedCategory === 'maps') {
+      category = 'maps';
+      subtitle = item.tacticalDescription || item.coordinates || 'Mapa';
+      imageUrl = item.splash || item.displayIcon || '';
+    } else if (this.selectedCategory === 'skins') {
+      category = 'skins';
+      subtitle = 'Aspecto de Arma';
+      imageUrl = item.displayIcon || item.wallpaper || '';
+    }
+
+    const favItem: FavoriteItem = {
+      uuid: item.uuid,
+      category,
+      displayName: item.displayName,
+      subtitle,
+      imageUrl,
+      extraInfo: item.description || item.narrativeDescription || '',
+    };
+
+    const isAdded = await this.favoritesService.toggleFavorite(favItem);
+
+    if (this.selectedCategory === 'favorites') {
+      await this.loadCategoryData();
+    }
+
+    await this.showToast(isAdded ? '★ Agregado a favoritos' : '☆ Eliminado de favoritos');
+    this.cdr.markForCheck();
   }
 
   /**
@@ -219,6 +305,9 @@ export class ValorantListPage implements OnInit {
     } else if (this.selectedCategory === 'skins') {
       this.availableFilters = ['Todas', 'Vandal', 'Phantom', 'Operator', 'Sheriff', 'Ghost', 'Spectre', 'Knife'];
       this.selectedFilter = 'Todas';
+    } else if (this.selectedCategory === 'favorites') {
+      this.availableFilters = ['Todos', 'Agentes', 'Mapas', 'Skins'];
+      this.selectedFilter = 'Todos';
     }
   }
 
@@ -246,6 +335,10 @@ export class ValorantListPage implements OnInit {
         matchesFilter = item.tacticalDescription === filter;
       } else if (this.selectedCategory === 'skins' && filter !== 'Todas') {
         matchesFilter = (item.displayName || '').toLowerCase().includes(filter.toLowerCase());
+      } else if (this.selectedCategory === 'favorites' && filter !== 'Todos') {
+        if (filter === 'Agentes') matchesFilter = item.category === 'agents';
+        else if (filter === 'Mapas') matchesFilter = item.category === 'maps';
+        else if (filter === 'Skins') matchesFilter = item.category === 'skins';
       }
 
       if (!matchesFilter) {
@@ -257,8 +350,8 @@ export class ValorantListPage implements OnInit {
         return true;
       }
       const name = (item.displayName || '').toLowerCase();
-      const role = (item.role?.displayName || '').toLowerCase();
-      const tactical = (item.tacticalDescription || '').toLowerCase();
+      const role = (item.role?.displayName || item.subtitle || '').toLowerCase();
+      const tactical = (item.tacticalDescription || item.extraInfo || '').toLowerCase();
       return name.includes(query) || role.includes(query) || tactical.includes(query);
     });
 
@@ -350,6 +443,7 @@ export class ValorantListPage implements OnInit {
    */
   goToDetail(item: any): void {
     if (!item?.uuid) return;
-    this.router.navigate(['/detail', this.selectedCategory, item.uuid]);
+    const cat = this.selectedCategory === 'favorites' ? (item.category || 'agents') : this.selectedCategory;
+    this.router.navigate(['/detail', cat, item.uuid]);
   }
 }

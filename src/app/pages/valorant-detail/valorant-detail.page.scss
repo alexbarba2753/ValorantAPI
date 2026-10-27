@@ -3,6 +3,17 @@
   color: #ece8e1;
 }
 
+.fav-detail-btn {
+  ion-icon {
+    font-size: 1.45rem;
+    color: #ffffff;
+
+    &.active-star {
+      color: #ffd700;
+    }
+  }
+}
+
 .state-container {
   display: flex;
   flex-direction: column;

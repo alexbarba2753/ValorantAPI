@@ -11,7 +11,7 @@
       --color-checked: #ffffff;
       --indicator-color: #ff4655;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
   }
 }
@@ -130,6 +130,7 @@
 }
 
 .valorant-card {
+  position: relative;
   background: #17222d;
   border-radius: 10px;
   border-left: 4px solid #ff4655;
@@ -137,6 +138,27 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   cursor: pointer;
+
+  .fav-card-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    --background: rgba(15, 25, 35, 0.75);
+    --border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+
+    ion-icon {
+      font-size: 1.35rem;
+      color: #cbd5e1;
+
+      &.active-star {
+        color: #ffd700;
+      }
+    }
+  }
 
   ion-card-header {
     padding-bottom: 6px;
@@ -192,7 +214,8 @@
   align-items: center;
   overflow: hidden;
 
-  &.agent-box {
+  &.agent-box,
+  &.agents-box {
     height: 200px;
 
     .agent-img {
@@ -203,7 +226,8 @@
     }
   }
 
-  &.map-box {
+  &.map-box,
+  &.maps-box {
     height: 170px;
 
     .map-img {
@@ -213,7 +237,8 @@
     }
   }
 
-  &.skin-box {
+  &.skin-box,
+  &.skins-box {
     height: 150px;
     padding: 10px;
 

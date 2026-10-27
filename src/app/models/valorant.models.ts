@@ -66,3 +66,13 @@ export interface WeaponSkin {
   chromas?: SkinChroma[];
   levels?: SkinLevel[];
 }
+
+// Interfaz para la persistencia de favoritos con Capacitor Preferences (Requisito R6)
+export interface FavoriteItem {
+  uuid: string;
+  category: 'agents' | 'maps' | 'skins';
+  displayName: string;
+  subtitle?: string;
+  imageUrl?: string;
+  extraInfo?: string;
+}

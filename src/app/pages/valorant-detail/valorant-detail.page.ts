@@ -20,13 +20,18 @@ import {
   IonChip,
   IonLabel,
   IonIcon,
+  ToastController,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   cloudOfflineOutline,
   alertCircleOutline,
+  star,
+  starOutline,
 } from 'ionicons/icons';
 import { ValorantService } from '../../services/valorant';
+import { FavoritesService } from '../../services/favorites';
+import { FavoriteItem } from '../../models/valorant.models';
 
 @Component({
   selector: 'app-valorant-detail',
@@ -58,7 +63,9 @@ import { ValorantService } from '../../services/valorant';
 export class ValorantDetailPage implements OnInit {
   private route = inject(ActivatedRoute);
   private valorantService = inject(ValorantService);
+  private favoritesService = inject(FavoritesService);
   private cdr = inject(ChangeDetectorRef);
+  private toastController = inject(ToastController);
 
   category: string = 'agents';
   id: string = '';
@@ -71,6 +78,8 @@ export class ValorantDetailPage implements OnInit {
     addIcons({
       cloudOfflineOutline,
       alertCircleOutline,
+      star,
+      starOutline,
     });
   }
 
@@ -138,6 +147,57 @@ export class ValorantDetailPage implements OnInit {
         error: handleError,
       });
     }
+  }
+
+  /**
+   * Comprueba si el elemento actual está guardado en favoritos (Requisito R6)
+   */
+  isFavorite(): boolean {
+    return this.favoritesService.isFavorite(this.id);
+  }
+
+  /**
+   * Alterna el estado de favorito del elemento actual (Requisito R6)
+   */
+  async toggleFavorite(): Promise<void> {
+    if (!this.item) return;
+
+    let cat: 'agents' | 'maps' | 'skins' = 'agents';
+    let subtitle = '';
+    let imageUrl = '';
+
+    if (this.category === 'agents') {
+      cat = 'agents';
+      subtitle = this.item.role?.displayName || 'Agente';
+      imageUrl = this.item.fullPortrait || this.item.displayIcon || '';
+    } else if (this.category === 'maps') {
+      cat = 'maps';
+      subtitle = this.item.tacticalDescription || this.item.coordinates || 'Mapa';
+      imageUrl = this.item.splash || this.item.displayIcon || '';
+    } else {
+      cat = 'skins';
+      subtitle = 'Aspecto de Arma';
+      imageUrl = this.item.displayIcon || this.item.wallpaper || '';
+    }
+
+    const favItem: FavoriteItem = {
+      uuid: this.id,
+      category: cat,
+      displayName: this.item.displayName,
+      subtitle,
+      imageUrl,
+      extraInfo: this.item.description || this.item.narrativeDescription || '',
+    };
+
+    const isAdded = await this.favoritesService.toggleFavorite(favItem);
+    const toast = await this.toastController.create({
+      message: isAdded ? '★ Agregado a favoritos' : '☆ Eliminado de favoritos',
+      duration: 2500,
+      position: 'bottom',
+      color: 'dark',
+    });
+    await toast.present();
+    this.cdr.markForCheck();
   }
 
   getCategoryTitle(): string {

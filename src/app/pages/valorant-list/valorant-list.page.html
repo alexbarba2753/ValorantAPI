@@ -3,7 +3,7 @@
     <ion-title>Valorant Explorer</ion-title>
   </ion-toolbar>
 
-  <!-- Segmento para alternar entre los 3 endpoints -->
+  <!-- Segmento para alternar entre los endpoints y Favoritos (Requisito R6) -->
   <ion-toolbar class="segment-toolbar">
     <ion-segment [value]="selectedCategory" (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="agents">
@@ -14,6 +14,9 @@
       </ion-segment-button>
       <ion-segment-button value="skins">
         <ion-label>Skins</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="favorites">
+        <ion-label>Favoritos</ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -64,7 +67,7 @@
   @if (isLoading) {
     <div class="loading-container">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <p>Cargando información desde Valorant API...</p>
+      <p>Cargando información...</p>
     </div>
   }
 
@@ -84,22 +87,41 @@
     </div>
   }
 
-  <!-- Estado sin resultados de búsqueda (Requisito R3 y R5) -->
+  <!-- Estado sin resultados de búsqueda o lista vacía (Requisito R3, R5 y R6) -->
   @if (!isLoading && !errorMessage && displayedItems.length === 0) {
     <div class="empty-state">
-      <ion-icon name="search-outline" class="state-icon empty-icon"></ion-icon>
-      <p>No se encontraron resultados para <strong>"{{ searchTerm || selectedFilter }}"</strong></p>
-      <ion-button size="small" fill="outline" color="primary" (click)="onClearSearch()">
-        Restablecer filtros
-      </ion-button>
+      @if (selectedCategory === 'favorites' && !searchTerm) {
+        <ion-icon name="star-outline" class="state-icon empty-icon"></ion-icon>
+        <p>Aún no tienes elementos guardados en favoritos.<br>Toca la estrella (★) en cualquier tarjeta para guardarlo.</p>
+      } @else {
+        <ion-icon name="search-outline" class="state-icon empty-icon"></ion-icon>
+        <p>No se encontraron resultados para <strong>"{{ searchTerm || selectedFilter }}"</strong></p>
+        <ion-button size="small" fill="outline" color="primary" (click)="onClearSearch()">
+          Restablecer filtros
+        </ion-button>
+      }
     </div>
   }
 
-  <!-- Lista de Tarjetas (Requisito R1) con navegación a Detalle (Requisito R4) -->
+  <!-- Lista de Tarjetas (Requisito R1) con navegación a Detalle (Requisito R4) y botón Favorito (Requisito R6) -->
   @if (!isLoading && !errorMessage && displayedItems.length > 0) {
     <div class="cards-container">
       @for (item of displayedItems; track item.uuid) {
         <ion-card class="valorant-card" (click)="goToDetail(item)" [button]="true">
+
+          <!-- Botón de Favorito Flotante (Estrella - Requisito R6) -->
+          <ion-button
+            fill="clear"
+            size="small"
+            class="fav-card-btn"
+            (click)="toggleFavorite($event, item)"
+          >
+            <ion-icon
+              slot="icon-only"
+              [name]="isFavorite(item.uuid) ? 'star' : 'star-outline'"
+              [class.active-star]="isFavorite(item.uuid)"
+            ></ion-icon>
+          </ion-button>
 
           <!-- ================= VISTA DE AGENTES ================= -->
           @if (selectedCategory === 'agents') {
@@ -193,6 +215,36 @@
               <p class="attribute-line">
                 <strong>Niveles de mejora:</strong> {{ item.levels?.length || 1 }} niveles
               </p>
+            </ion-card-content>
+          }
+
+          <!-- ================= VISTA DE FAVORITOS (R6) ================= -->
+          @if (selectedCategory === 'favorites') {
+            <div class="card-image-box" [ngClass]="item.category + '-box'">
+              @if (item.imageUrl) {
+                <img
+                  [src]="item.imageUrl"
+                  [alt]="item.displayName"
+                  class="agent-img"
+                  loading="lazy"
+                />
+              }
+            </div>
+
+            <ion-card-header>
+              <div class="badge-wrapper">
+                <ion-badge color="primary">{{ item.category | uppercase }}</ion-badge>
+              </div>
+              <ion-card-title>{{ item.displayName }}</ion-card-title>
+              @if (item.subtitle) {
+                <ion-card-subtitle>{{ item.subtitle }}</ion-card-subtitle>
+              }
+            </ion-card-header>
+
+            <ion-card-content>
+              @if (item.extraInfo) {
+                <p class="description-text">{{ item.extraInfo }}</p>
+              }
             </ion-card-content>
           }
 
